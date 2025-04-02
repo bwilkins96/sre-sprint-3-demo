@@ -2,6 +2,8 @@ services:
   latency-checker:
     image: lc-image
     container_name: lc-container
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
   lc-mongodb:
     image: mongo
     container_name: lc-mongodb
