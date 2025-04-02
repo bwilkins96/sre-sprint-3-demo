@@ -3,7 +3,7 @@ FROM python:3.12-slim
 WORKDIR /latency-checker
 
 COPY ./requirements.txt ./requirements.txt
-COPY ./latency_checker_edit.py ./latency_checker.py
+COPY ./latency_checker.py ./latency_checker.py
 
 RUN pip install -r requirements.txt
 

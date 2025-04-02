@@ -18,7 +18,7 @@ pip install -r requirements.txt
 ```
 ## How to Run
 ```bash
-python latency_checker_edit.py [targets] [options]
+python latency_checker.py [targets] [options]
 ```
 
 | Argument | Description | Default |
@@ -30,7 +30,7 @@ python latency_checker_edit.py [targets] [options]
 
 #### Example run:
 ```bash
-python latency_checker_edit.py google.com cloudflare.com -c 5 -i 2 -t 150
+python latency_checker.py google.com cloudflare.com -c 5 -i 2 -t 150
 ```
 
 ## Output
