@@ -1,0 +1,18 @@
+services:
+  latency-checker:
+    image: lc-image
+    container_name: lc-container
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+  lc-mongodb:
+    image: mongo
+    container_name: lc-mongodb
+    hostname: lc-mongodb
+    ports:
+      - 27018:27017
+    volumes:
+      - lc_mongodb_data:/data/db
+
+volumes:
+  lc_mongodb_data:
+    driver: local
