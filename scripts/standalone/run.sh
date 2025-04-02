@@ -6,11 +6,11 @@
 
 # example commands:
 # cd ./sre-sprint-3-demo
-# ./scripts/runDocker.sh
+# ./scripts/standalone/run.sh
 
 echo -e "\nRUNNING START SCRIPT\n"
-./scripts/docker/start.sh
+./scripts/standalone/misc/start.sh
 
 echo -e "\nRUNNING CLEAN UP SCRIPT\n"
-./scripts/docker/cleanUp.sh
+./scripts/standalone/misc/cleanUp.sh
 echo ""
