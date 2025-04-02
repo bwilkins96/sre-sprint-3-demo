@@ -40,5 +40,26 @@ python latency_checker.py google.com cloudflare.com -c 5 -i 2 -t 150
 latency_log.txt
 ```
 
+## Containerization
 
+This repo contains a [Dockerfile](Dockerfile) for the latency checker tool and a [docker-compose.yml](docker-compose.yml) file for running the latency checker with a MongoDB container for storing logs.
 
+The [scripts](scripts) folder contains bash scripts for starting/cleaning up the Docker containers.
+
+### How to Run:
+
+#### Standalone (only the latency checker container)
+```bash
+# must be run inside 'sre-sprint-3-demo' folder
+
+cd ./sre-sprint-3-demo
+./scripts/standalone/run.sh
+```
+
+#### With MongoDB (both the latency checker and MongoDB containers)
+```bash
+# must be run inside 'sre-sprint-3-demo' folder
+
+cd ./sre-sprint-3-demo
+./scripts/with-mongodb/run.sh
+```
