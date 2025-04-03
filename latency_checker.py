@@ -90,6 +90,7 @@ async def check_latency(target: str, threshold: int, interval: int, count: int, 
                 "target": target,
                 "status": "unreachable",
                 "latency_ms": None,
+                "threshold_ms": threshold,
                 "timestamp": datetime.datetime.now(datetime.timezone.utc)
             })
         else:
@@ -104,6 +105,7 @@ async def check_latency(target: str, threshold: int, interval: int, count: int, 
                 "target": target,
                 "status": "high_latency" if latency_ms > threshold else "ok", # Log status based on threshold
                 "latency_ms": latency_ms,
+                "threshold_ms": threshold,
                 "timestamp": datetime.datetime.now(datetime.timezone.utc)
             }
             collection.insert_one(entry)
