@@ -9,7 +9,7 @@ echo -e "\nBUILDING LATENCY CHECKER IMAGE\n"
 docker-compose build latency-checker
 
 echo -e "\nRUNNING LATENCY CHECKER CONTAINER"
-echo "'python latency_checker.py google.com -c 5 -i 2 -t 150' to test"
+echo "'python latency_checker.py google.com -c 5 -i 2 -t 50' to test"
 echo -e "Run 'exit' to leave the container\n"
 
 docker run -it --rm \
