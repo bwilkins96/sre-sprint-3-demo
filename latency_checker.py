@@ -3,6 +3,9 @@ import asyncio   # Enables asynchronous programming for efficient concurrent exe
 import logging   # Handles logging to save latency results in a file
 from argparse import ArgumentParser  # Used for handling command-line arguments (e.g., --threshold, --interval, --count
 from ping3 import ping  # Import the ping function from the ping3 library to measure network latency
+from pymongo import MongoClient # Import MongoClient to connect to MongoDB
+import datetime
+import os
 
 def configure_logging(file_name: str) -> None:
     """
@@ -20,6 +23,19 @@ def configure_logging(file_name: str) -> None:
         level=logging.INFO,          # Log level (INFO: logs important events)
         format="%(asctime)s - %(levelname)s - %(message)s"  # Log format with timestamp
     )
+
+def get_mongo_collection():
+    """
+    Connects to MongoDB using environment variables.
+    Returns a collection object for logging.
+    """
+    mongo_host = os.getenv("MONGO_HOST", "localhost")
+    mongo_port = int(os.getenv("MONGO_PORT", 27017))
+
+    client = MongoClient(f"mongodb://{mongo_host}:{mongo_port}")
+    db = client["latency_monitor"]
+    return db["latency_logs"]
+
 
 def set_up_cmd_line_parser() -> ArgumentParser:
     """
@@ -49,7 +65,7 @@ def set_up_cmd_line_parser() -> ArgumentParser:
 
     return parser
 
-async def check_latency(target: str, threshold: int, interval: int, count: int) -> None:
+async def check_latency(target: str, threshold: int, interval: int, count: int, collection) -> None:
     """
     Pings the target server a specified number of times and logs high latency.
 
@@ -67,14 +83,30 @@ async def check_latency(target: str, threshold: int, interval: int, count: int) 
 
         if latency is None:
             print(f"❌ Unable to reach {target}")  # Display error if the server is unreachable
+            
             logging.warning(f"⚠️ Failed to reach {target}")  # Log failure
+
+            collection.insert_one({ # Log to mongodb with unreachable status
+                "target": target,
+                "status": "unreachable",
+                "latency_ms": None,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+            })
         else:
             latency_ms = round(latency * 1000, 2)  # Convert seconds to milliseconds
             print(f"✅ {target} latency: {latency_ms} ms ({i+1}/{count})")  # Display latency with count progress
 
-            # Log only if latency exceeds the defined threshold
+            # Log to file only if latency exceeds the defined threshold
             if latency_ms > threshold:
                 logging.warning(f"⚠️ High latency for {target}: {latency_ms} ms")
+
+            entry = { # Create a log entry for MongoDB
+                "target": target,
+                "status": "high_latency" if latency_ms > threshold else "ok", # Log status based on threshold
+                "latency_ms": latency_ms,
+                "timestamp": datetime.datetime.now(datetime.timezone.utc)
+            }
+            collection.insert_one(entry)
 
         await asyncio.sleep(interval)  # Non-blocking sleep to avoid excessive CPU usage
 
@@ -92,10 +124,13 @@ async def main():
 
     # Parse command-line arguments
     parser = set_up_cmd_line_parser()
-    args = parser.parse_args()  
+    args = parser.parse_args()
+
+    # Connect to MongoDB collection for logging
+    collection = get_mongo_collection() 
 
     # Create an asynchronous task for each target
-    tasks = [check_latency(target, args.threshold, args.interval, args.count) for target in args.targets]
+    tasks = [check_latency(target, args.threshold, args.interval, args.count, collection) for target in args.targets]
     await asyncio.gather(*tasks)  # Run all latency checks concurrently
 
 

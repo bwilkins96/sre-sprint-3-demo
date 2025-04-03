@@ -1,9 +1,16 @@
 services:
   latency-checker:
     image: lc-image
+    build: .
     container_name: lc-container
+    depends_on:
+      - lc-mongodb
+    environment:
+      - MONGO_HOST=lc-mongodb
+      - MONGO_PORT=27017
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+    command: /bin/bash
   lc-mongodb:
     image: mongo
     container_name: lc-mongodb
