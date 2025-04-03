@@ -8,8 +8,9 @@ docker-compose up -d lc-mongodb
 echo -e "\nBUILDING LATENCY CHECKER IMAGE\n"
 docker-compose build latency-checker
 
-echo -e "\nRUNNING LATENCY CHECKER CONTAINER"
+echo -e "\nRUNNING LATENCY CHECKER CONTAINER\n"
 echo "'python latency_checker.py google.com -c 5 -i 2 -t 50' to test"
+echo -e "\n'latency-checker' or 'lc' is equivalent to 'python latency-checker.py'"
 echo -e "Run 'exit' to leave the container\n"
 
 docker run -it --rm \

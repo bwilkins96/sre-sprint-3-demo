@@ -7,7 +7,7 @@
 
 # example commands:
 # cd ./sre-sprint-3-demo
-# ./scripts/with-mongodb/run.sh
+# ./scripts/run.sh
 
 echo -e "\nRUNNING START SCRIPT\n"
 ./scripts/misc/start.sh
