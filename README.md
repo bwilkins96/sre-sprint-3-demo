@@ -16,7 +16,22 @@ cd network-latency-checker
 ```bash
 pip install -r requirements.txt
 ```
-## How to Run
+
+## Containerization
+
+This repo contains a [Dockerfile](Dockerfile) for the latency checker tool and a [docker-compose.yml](docker-compose.yml) file for running the latency checker with a MongoDB container for storing logs.
+
+The [scripts](scripts) folder contains bash scripts for starting/cleaning up the Docker containers.
+
+### How to Run:
+Execute the script to run the containers:
+```bash
+# must be run inside 'sre-sprint-3-demo' folder
+
+cd ./sre-sprint-3-demo
+./scripts/run.sh
+```
+Now inside the container, run the python script:
 ```bash
 python latency_checker.py [targets] [options]
 ```
@@ -30,36 +45,35 @@ python latency_checker.py [targets] [options]
 
 #### Example run:
 ```bash
-python latency_checker.py google.com cloudflare.com -c 5 -i 2 -t 150
+python latency_checker.py google.com cloudflare.com -c 5 -i 2 -t 50
 ```
 
 ## Output
 - Results are printed to the terminal
-- High-latency or unreachable events are logged to:
+- High-latency or unreachable events are logged to: ```latency_log.txt``` inside the container
+- All events are logged to MongoDB
+
+## MongoDB logs
+Logs are saved to the ```latency_monitor.latency_logs``` collection inside MongoDB
+
+Run the script to enter the Mongo shell in another terminal: 
 ```bash
-latency_log.txt
+./scripts/enterMongo.sh
 ```
 
-## Containerization
-
-This repo contains a [Dockerfile](Dockerfile) for the latency checker tool and a [docker-compose.yml](docker-compose.yml) file for running the latency checker with a MongoDB container for storing logs.
-
-The [scripts](scripts) folder contains bash scripts for starting/cleaning up the Docker containers.
-
-### How to Run:
-
-#### Standalone (only the latency checker container)
+Then inside the Mongo shell:
 ```bash
-# must be run inside 'sre-sprint-3-demo' folder
-
-cd ./sre-sprint-3-demo
-./scripts/standalone/run.sh
+use latency_monitor
+db.latency_logs.find()
 ```
 
-#### With MongoDB (both the latency checker and MongoDB containers)
+#### Examples
+High latency:
 ```bash
-# must be run inside 'sre-sprint-3-demo' folder
-
-cd ./sre-sprint-3-demo
-./scripts/with-mongodb/run.sh
+db.latency_logs.find({ status: "high_latency" })
 ```
+Unreachable:
+```bash
+db.latency_logs.find({ status: "unreachable" })
+```
+
