@@ -8,7 +8,7 @@ A lightweight Python-based tool to monitor network latency by pinging target ser
 
 1. Clone the repo:
 ```bash
-git clone https://github.com/your-org-or-username/network-latency-checker.git
+git clone https://github.com/bwilkins96/network-latency-checker.git
 
 cd network-latency-checker
 ```
