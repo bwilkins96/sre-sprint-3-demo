@@ -81,7 +81,7 @@ async def check_latency(target: str, threshold: int, interval: int, count: int, 
     for i in range(count):  # Stop after 'count' pings
         latency = await asyncio.to_thread(ping, target)  # Run ping in an async-friendly way
 
-        if latency is None:
+        if latency is False:
             print(f"❌ Unable to reach {target}")  # Display error if the server is unreachable
             
             logging.warning(f"⚠️ Failed to reach {target}")  # Log failure
